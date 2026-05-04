@@ -1,8 +1,10 @@
 package net.abdullahjutt.journalApp.controller;
 
+import net.abdullahjutt.journalApp.api.response.WheatherResponse;
 import net.abdullahjutt.journalApp.entity.User;
 import net.abdullahjutt.journalApp.repository.UserRepository;
 import net.abdullahjutt.journalApp.service.UserService;
+import net.abdullahjutt.journalApp.service.WheatherService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,9 @@ public class UserController {
         private UserService userService;
         @Autowired
         private UserRepository userRepository;
+
+        @Autowired
+        private WheatherService wheatherService;
 //        @GetMapping
 //        public ResponseEntity<?> getAll(){
 //            List<User> userList= userService.getAll();
@@ -62,6 +67,17 @@ public class UserController {
                  return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
              }
 
+        }
+        @GetMapping
+    public ResponseEntity<?> greetings(){
+            Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+            String greetings="Hi "+authentication.getName();
+            WheatherResponse res= wheatherService.getWheather("Lahore");
+            if(res !=null){
+                 greetings += " - Weather feels like "+res.getCurrent().getTemperature()+"°C";
+            }
+
+            return new ResponseEntity<>(greetings, HttpStatus.OK);
         }
 
 }
