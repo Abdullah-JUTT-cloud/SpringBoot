@@ -2,15 +2,16 @@ package net.abdullahjutt.journalApp.service;
 
 import net.abdullahjutt.journalApp.api.response.WheatherResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Component
+@Service
 public class WheatherService {
-    public static  final String apikey="9f2f6e995877bef1598d3ccaddec8f16";
+    @Value("${weather.api.key}")
+    private String apikey;
     public static  final String API="https://api.weatherstack.com/current?access_key=API_KEY&query=CITY";
 
     @Autowired
