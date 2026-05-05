@@ -1,5 +1,6 @@
 package net.abdullahjutt.journalApp.controller;
 
+import net.abdullahjutt.journalApp.cache.AppCache;
 import net.abdullahjutt.journalApp.entity.User;
 import net.abdullahjutt.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import java.util.List;
 public class AdminController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private AppCache appCache;
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllUsers(){
@@ -32,5 +35,9 @@ public class AdminController {
         } catch (Exception e) {
             return new ResponseEntity<>("Failed to create admin: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+    @GetMapping("clear-cache")
+            public void  clearAppCache(){
+        appCache.init();;
     }
 }
