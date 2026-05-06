@@ -29,7 +29,7 @@ public class UserDetailImpTest {
     @Test
     @Disabled
     void loadByUsername() {
-        User user = new User("abc", "dfsf");
+        User user = new User();
         user.setRoles(List.of("USER"));
 
         when(userRepository.findByUsername(ArgumentMatchers.anyString())).thenReturn(user);

@@ -1,7 +1,9 @@
 package net.abdullahjutt.journalApp.entity;
 
 import com.mongodb.connection.ProxySettings;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Document(collection = "users")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     private ObjectId id;
@@ -26,6 +30,8 @@ public class User {
     private List<JournalEntry> journalEntryListOfUsers=new ArrayList<>();
 
     private List<String> roles;
+    private String email;
+    private boolean sentimentAnalysis;
 
 
 }
