@@ -20,10 +20,23 @@ public class WheatherService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private RedisService redisService;
+
     public WheatherResponse getWheather(String city){
-        String finalAPI=appCache.appCache.get(AppCache.keys.WEATHER_API.toString()).replace(Placeholders.CITY,city).replace(Placeholders.API_KEY,apikey);
-       ResponseEntity<WheatherResponse> response= restTemplate.exchange(finalAPI,HttpMethod.GET,null, WheatherResponse.class);
-      WheatherResponse body= response.getBody();
-      return body;
+         String cacheKey = "Weather_of_" + city;
+         WheatherResponse wheatherResponse = redisService.get(cacheKey, WheatherResponse.class);
+         if(wheatherResponse !=null){
+             return wheatherResponse;
+         }else {
+             String finalAPI=appCache.appCache.get(AppCache.keys.WEATHER_API.toString()).replace(Placeholders.CITY,city).replace(Placeholders.API_KEY,apikey);
+             ResponseEntity<WheatherResponse> response= restTemplate.exchange(finalAPI,HttpMethod.GET,null, WheatherResponse.class);
+             WheatherResponse body= response.getBody();
+             if(body!=null){
+                 redisService.set(cacheKey,body,300l);
+             }
+             return body;
+         }
+
     }
 }
