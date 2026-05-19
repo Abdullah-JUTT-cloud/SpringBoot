@@ -54,6 +54,27 @@ public class JournalEntryService {
 
     }
 
+    /**
+     * Save a journal entry and attach it to the given username without
+     * overriding the entry's date. Returns the saved JournalEntry.
+     */
+    @Transactional
+    public JournalEntry saveEntryForUserPreserveDate(JournalEntry journalEntry, String username){
+        try {
+            User user = userService.findByUsername(username);
+            if(user == null){
+                throw new RuntimeException("User not found");
+            }
+            JournalEntry saved = journalEntryRepository.save(journalEntry);
+            user.getJournalEntryListOfUsers().add(saved);
+            userService.saveUser(user);
+            return saved;
+        } catch (Exception e) {
+            log.error("Error saving entry for user", e);
+            throw new RuntimeException("An error occured while saving ...", e);
+        }
+    }
+
     public List<JournalEntry> getAll(){
         return journalEntryRepository.findAll();
     }
