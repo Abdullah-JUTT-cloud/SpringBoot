@@ -1,6 +1,8 @@
 package net.abdullahjutt.journalApp.config;
 
+import net.abdullahjutt.journalApp.filter.JwtFilter;
 import net.abdullahjutt.journalApp.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,12 +14,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     // 1. We store the service here. No @Autowired annotation needed on the field.
+    @Autowired
+    private JwtFilter jwtFilter;
+
     private final UserDetailsServiceImpl userDetailsService;
 
     // 2. Constructor: Spring automatically passes the UserDetailsServiceImpl here.
@@ -61,11 +67,9 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/journal/**","/users/**").authenticated()// Anyone can access /public/...
                         .requestMatchers("/admin/**").hasRole("ADMIN")  // Only admins can access /admin/...
-                        .anyRequest().authenticated()                   // Everything else requires login
+                        .anyRequest().authenticated()
                 )
-
-                // D. Login Method: Use HTTP Basic Auth (username/password in header) for now.
-                .httpBasic(httpBasic -> httpBasic.realmName("JournalApp"));
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);// Everything else requires login
 
         return http.build();
     }
